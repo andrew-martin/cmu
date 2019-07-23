@@ -9,6 +9,10 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 # Remove the vanilla Drupal project that comes with this image.
 RUN rm -rf ..?* .[!.]* *
 
+# Change docroot since we use Composer Drupal project.
+RUN sed -ri -e 's!/var/www/html!/var/www/html/web!g' /etc/apache2/sites-available/*.conf
+RUN sed -ri -e 's!/var/www!/var/www/html/web!g' /etc/apache2/apache2.conf /etc/apache2/conf-available/*.conf
+
 # Install needed programs for next steps.
 RUN apt-get update && apt-get install --no-install-recommends -y \
   apt-transport-https \
