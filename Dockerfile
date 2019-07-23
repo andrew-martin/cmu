@@ -6,6 +6,9 @@ FROM drupal:8.7-apache
 # Install composer.
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+# Remove the vanilla Drupal project that comes with this image.
+RUN rm -rf ..?* .[!.]* *
+
 # Install needed programs for next steps.
 RUN apt-get update && apt-get install --no-install-recommends -y \
   apt-transport-https \
