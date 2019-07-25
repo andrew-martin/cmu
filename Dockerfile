@@ -56,8 +56,6 @@ COPY composer.json /var/www/.composer/composer.json
 
 # Put a turbo on composer.
 RUN composer global require hirak/prestissimo
-RUN npm install -g webpack
-
 
 # Remove Apache logs to stdout from the php image (used by Drupal image).
 RUN rm -f /var/log/apache2/access.log \
