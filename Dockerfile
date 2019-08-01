@@ -65,7 +65,6 @@ COPY composer.json /var/www/.composer/composer.json
 RUN wget https://robo.li/robo.phar
 RUN chmod +x robo.phar && mv robo.phar /usr/local/bin/robo
 
-
 # Put a turbo on composer.
 RUN composer global require hirak/prestissimo
 
