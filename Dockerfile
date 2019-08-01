@@ -6,6 +6,9 @@ FROM drupal:8.7-apache
 # Install composer.
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
+# Remove the memory limit for the CLI only.
+RUN echo 'memory_limit = -1' > /usr/local/etc/php/php-cli.ini
+
 # Remove the vanilla Drupal project that comes with this image.
 RUN rm -rf ..?* .[!.]* *
 
@@ -36,6 +39,10 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - \
   shellcheck \
   git \
   unzip \
+  rsync \
+  sudo \
+  vim \
+  wget \
   && curl -fsSL https://github.com/mikefarah/yq/releases/download/2.4.0/yq_linux_amd64 -o /usr/local/bin/yq \
   && chmod +x /usr/local/bin/yq \
   # Install xsl, mysqli, xdebug, imagick.
@@ -54,6 +61,11 @@ WORKDIR /var/www/.composer
 # Install Drupal dev third party and upgrade Php-unit.
 COPY composer.json /var/www/.composer/composer.json
 
+# Install Robo CI.
+RUN wget https://robo.li/robo.phar
+RUN chmod +x robo.phar && mv robo.phar /usr/local/bin/robo
+
+
 # Put a turbo on composer.
 RUN composer global require hirak/prestissimo
 
@@ -67,3 +79,8 @@ RUN mv /usr/local/etc/php/php.ini-development /usr/local/etc/php/php.ini \
   && sed -i "s#max_execution_time = 30#max_execution_time = 90#g" /usr/local/etc/php/php.ini \
   && sed -i "s#;max_input_nesting_level = 64#max_input_nesting_level = 512#g" /usr/local/etc/php/php.ini
   
+# Install Dockerize.
+ENV DOCKERIZE_VERSION v0.6.0
+RUN wget https://github.com/jwilder/dockerize/releases/download/$DOCKERIZE_VERSION/dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && tar -C /usr/local/bin -xzvf dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz \
+    && rm dockerize-linux-amd64-$DOCKERIZE_VERSION.tar.gz
